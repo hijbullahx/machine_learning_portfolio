@@ -14,9 +14,10 @@ st.set_page_config(
 )
 
 # Title
-st.title("🇧🇩 Bangladesh Autonomous Vehicle Perception System (YOLOv11)")
-st.markdown("### Real-time Vehicle Detection for Autonomous Driving")
+st.title("Bangladesh Autonomous Vehicle Obstacle Detection System (YOLOv11)")
+st.markdown("### Real-time Perception for Dense Traffic & Complex Road Conditions")
 st.markdown("---")
+
 
 # Load model with error handling
 @st.cache_resource
