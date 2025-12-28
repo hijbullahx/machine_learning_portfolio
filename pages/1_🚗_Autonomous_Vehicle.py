@@ -139,7 +139,7 @@ st.markdown('<p class="subtitle">Real-time Perception for Dense Traffic & Comple
 st.markdown("---")
 
 # Technologies & Frameworks
-st.markdown('<h2 style="color: white; font-size: 1.8rem; font-weight: 700; margin: 1.5rem 0;">🛠️ Technologies & Frameworks</h2>', unsafe_allow_html=True)
+st.markdown('<h2 style="font-size: 1.8rem; font-weight: 700; margin: 1.5rem 0;">🛠️ Technologies & Frameworks</h2>', unsafe_allow_html=True)
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
@@ -450,7 +450,7 @@ else:
 
 # Contributors Section
 st.markdown("---")
-st.markdown('<h2 style="color: white; font-size: 1.8rem; font-weight: 700; margin: 1.5rem 0;">👥 Project Contributors</h2>', unsafe_allow_html=True)
+st.markdown('<h2 style="font-size: 1.8rem; font-weight: 700; margin: 1.5rem 0;">👥 Project Contributors</h2>', unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
 
