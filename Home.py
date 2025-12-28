@@ -361,19 +361,19 @@ st.markdown('<h2 class="section-title">📫 Get in Touch</h2>', unsafe_allow_htm
 
 st.markdown("""
     <div style="text-align: center; margin: 2rem 0;">
-        <a href="mailto:hijbullah119445@gmail.com" target="_blank" style="margin: 0 15px; text-decoration: none;">
-            <img src="https://img.icons8.com/color/96/000000/gmail-new.png" alt="Email" style="width: 60px; height: 60px; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
-        </a>
         <a href="https://www.linkedin.com/in/hijbullah/" target="_blank" style="margin: 0 15px; text-decoration: none;">
-            <img src="https://img.icons8.com/color/96/000000/linkedin.png" alt="LinkedIn" style="width: 60px; height: 60px; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+            <img src="https://img.icons8.com/color/96/000000/linkedin.png" alt="LinkedIn" style="width: 60px; height: 60px; transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
         </a>
         <a href="https://github.com/hijbullahx" target="_blank" style="margin: 0 15px; text-decoration: none;">
-            <img src="https://img.icons8.com/glyph-neue/96/000000/github.png" alt="GitHub" style="width: 60px; height: 60px; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+            <img src="https://img.icons8.com/glyph-neue/96/000000/github.png" alt="GitHub" style="width: 60px; height: 60px; transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
         </a>
         <a href="https://www.facebook.com/h6781/" target="_blank" style="margin: 0 15px; text-decoration: none;">
-            <img src="https://img.icons8.com/color/96/000000/facebook-new.png" alt="Facebook" style="width: 60px; height: 60px; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+            <img src="https://img.icons8.com/color/96/000000/facebook-new.png" alt="Facebook" style="width: 60px; height: 60px; transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
         </a>
     </div>
+    <p style="text-align: center; color: #6b7280; margin-top: 1rem;">
+        📧 hijbullah119445@gmail.com | 22303142@iubat.edu
+    </p>
 """, unsafe_allow_html=True)
 
 st.markdown("---")
