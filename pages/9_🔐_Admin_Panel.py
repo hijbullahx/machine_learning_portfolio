@@ -171,7 +171,15 @@ else:
         st.markdown("Upload a new trained model to replace the existing one.")
         
         col1, col2 = st.columns([2, 1])
-        markdown(f"""
+        
+        with col1:
+            # Current model info
+            model_path = "weights/best.pt"
+            if os.path.exists(model_path):
+                model_size = os.path.getsize(model_path) / (1024 * 1024)  # Convert to MB
+                model_modified = datetime.fromtimestamp(os.path.getmtime(model_path))
+                
+                st.markdown(f"""
                     <div class="admin-card">
                         <h3 style="color: #10b981; margin-bottom: 1rem;">✅ Model Status: Active</h3>
                         <p><strong>File:</strong> best.pt</p>
@@ -185,15 +193,7 @@ else:
                         <h3 style="color: #ef4444;">⚠️ No Model Found</h3>
                         <p>Please upload a model file below</p>
                     </div>
-                """, unsafe_allow_html=True
-            if os.path.exists(model_path):
-                model_size = os.path.getsize(model_path) / (1024 * 1024)  # Convert to MB
-                model_modified = datetime.fromtimestamp(os.path.getmtime(model_path))
-                
-                st.success(f"✅ Current model: **best.pt**")
-                st.info(f"📊 Size: {model_size:.2f} MB | Last Updated: {model_modified.strftime('%Y-%m-%d %H:%M:%S')}")
-            else:
-                st.warning("⚠️ No model file found!")
+                """, unsafe_allow_html=True)
             
             st.markdown("---")
             
@@ -218,7 +218,18 @@ else:
                             st.info(f"📦 Backup created: {backup_path}")
                         
                         # Save new model
-                        o""
+                        os.makedirs("weights", exist_ok=True)
+                        with open(model_path, "wb") as f:
+                            f.write(uploaded_model.read())
+                        
+                        st.success("✅ Model updated successfully! Please reload the Autonomous Vehicle page.")
+                        st.balloons()
+                        
+                    except Exception as e:
+                        st.error(f"❌ Error updating model: {str(e)}")
+        
+        with col2:
+            st.markdown("""
                 <div class="admin-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
                     <h3 style="color: white;">📋 Instructions</h3>
                     <ol style="text-align: left; padding-left: 1.5rem;">
@@ -233,18 +244,7 @@ else:
                         A backup will be created automatically
                     </div>
                 </div>
-            """, unsafe_allow_html=True
-            st.markdown("### 📋 Instructions")
-            st.markdown("""
-            1. Train your YOLOv11 model
-            2. Export as `.pt` format
-            3. Upload using the form
-            4. Click **Replace Current Model**
-            5. Refresh the app to use new model
-            """)
-            
-            st.markdown("### ⚠️ Important")
-            st.warning("A backup of the old model will be created automatically.")
+            """, unsafe_allow_html=True)
     
     # TAB 2: Project Management
     with tab2:
