@@ -4,11 +4,6 @@ import numpy as np
 from PIL import Image
 from ultralytics import YOLO
 import os
-import sys
-
-# Add utils to path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utils import hf_manager
 
 # Set page configuration
 st.set_page_config(
@@ -112,32 +107,105 @@ st.markdown("""
         z-index: 999;
         box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
     }
+    
+    .contributors-section {
+        background: linear-gradient(to right, #f8f9fa, #e9ecef);
+        padding: 2rem;
+        border-radius: 15px;
+        border-left: 5px solid #667eea;
+        margin: 2rem 0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    
+    .contributor-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease;
+        margin-bottom: 1rem;
+    }
+    
+    .contributor-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(102, 126, 234, 0.2);
+    }
     </style>
 """, unsafe_allow_html=True)
 
 # Header
-st.markdown('<h1 class="main-title">🇧🇩 Bangladesh Autonomous Vehicle Obstacle Detection System</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="main-title">Bangladesh Autonomous Vehicle Obstacle Detection System</h1>', unsafe_allow_html=True)
 st.markdown('<p class="subtitle">Real-time Perception for Dense Traffic & Complex Road Conditions</p>', unsafe_allow_html=True)
+st.markdown("---")
+
+# Technologies & Frameworks
+st.markdown('<h2 style="color: white; font-size: 1.8rem; font-weight: 700; margin: 1.5rem 0;">🛠️ Technologies & Frameworks</h2>', unsafe_allow_html=True)
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1.5rem; border-radius: 15px; color: white; box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3); transition: transform 0.3s ease;">
+        <h3 style="color: white !important; font-weight: 600; margin-bottom: 1rem;">🧠 Deep Learning</h3>
+        <ul style="list-style: none; padding: 0;">
+            <li>✓ PyTorch</li>
+            <li>✓ TensorFlow</li>
+            <li>✓ Ultralytics YOLO</li>
+            <li>✓ OpenCV</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+
+with col2:
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1.5rem; border-radius: 15px; color: white; box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3); transition: transform 0.3s ease;">
+        <h3 style="color: white !important; font-weight: 600; margin-bottom: 1rem;">👁️ Computer Vision</h3>
+        <ul style="list-style: none; padding: 0;">
+            <li>✓ Object Detection</li>
+            <li>✓ Image Segmentation</li>
+            <li>✓ Video Analysis</li>
+            <li>✓ Real-time Processing</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+
+with col3:
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1.5rem; border-radius: 15px; color: white; box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3); transition: transform 0.3s ease;">
+        <h3 style="color: white !important; font-weight: 600; margin-bottom: 1rem;">💻 Development</h3>
+        <ul style="list-style: none; padding: 0;">
+            <li>✓ Python</li>
+            <li>✓ Streamlit</li>
+            <li>✓ Git/GitHub</li>
+            <li>✓ Docker</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+
+with col4:
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1.5rem; border-radius: 15px; color: white; box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3); transition: transform 0.3s ease;">
+        <h3 style="color: white !important; font-weight: 600; margin-bottom: 1rem;">🔬 Research Areas</h3>
+        <ul style="list-style: none; padding: 0;">
+            <li>✓ Autonomous Vehicles</li>
+            <li>✓ Traffic Analysis</li>
+            <li>✓ Edge AI</li>
+            <li>✓ Model Optimization</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+
 st.markdown("---")
 
 # Load model with error handling
 @st.cache_resource
 def load_model():
     """Load YOLO model with error handling"""
-    model_filename = "vehicle_best.pt"
-    model_path = f"weights/{model_filename}"
+    model_path = "weights/best.pt"
     
-    # Try to download from Hugging Face if not exists locally
     if not os.path.exists(model_path):
-        st.info(f"📥 Downloading model from Hugging Face...")
-        downloaded_path = hf_manager.download_model(model_filename)
-        
-        if downloaded_path:
-            model_path = downloaded_path
-        else:
-            st.error(f"❌ Model file not found: {model_filename}")
-            st.info("📁 Please upload the model via Admin Panel or ensure it exists in the Hugging Face repo.")
-            st.stop()
+        st.error("❌ Model weights not found. Please add **best.pt** to the **weights/** folder.")
+        st.info("📁 Expected path: `weights/best.pt`")
+        st.stop()
     
     try:
         model = YOLO(model_path)
@@ -199,7 +267,7 @@ if uploaded_file is not None:
         with col1:
             st.markdown("#### Original Image")
             image = Image.open(uploaded_file)
-            st.image(image, use_column_width=True)
+            st.image(image, use_container_width=True)
         
         with col2:
             st.markdown("#### Detected Objects")
@@ -213,7 +281,7 @@ if uploaded_file is not None:
                 
                 # Convert BGR to RGB for display
                 annotated_image_rgb = cv2.cvtColor(annotated_image, cv2.COLOR_BGR2RGB)
-                st.image(annotated_image_rgb, use_column_width=True)
+                st.image(annotated_image_rgb, use_container_width=True)
         
         # Display detection statistics
         st.markdown("---")
@@ -315,7 +383,7 @@ if uploaded_file is not None:
                     
                     # Display current frame (for preview)
                     frame_rgb = cv2.cvtColor(annotated_frame, cv2.COLOR_BGR2RGB)
-                    frame_placeholder.image(frame_rgb, use_column_width=True)
+                    frame_placeholder.image(frame_rgb, use_container_width=True)
             
             # Release resources
             cap.release()
@@ -379,6 +447,34 @@ else:
         st.write("Model can detect the following classes:")
         classes_list = ", ".join([f"`{name}`" for name in model.names.values()])
         st.markdown(classes_list)
+
+# Contributors Section
+st.markdown("---")
+st.markdown('<h2 style="color: white; font-size: 1.8rem; font-weight: 700; margin: 1.5rem 0;">👥 Project Contributors</h2>', unsafe_allow_html=True)
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("""
+        <div class="contributor-card">
+            <h3 style="color: #667eea; margin-bottom: 0.5rem;">🎓 Md. Taher Bin Omar Hijbullah</h3>
+            <p style="color: #6b7280;">
+                📧 22303142@iubat.edu
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
+with col2:
+    st.markdown("""
+        <div class="contributor-card">
+            <h3 style="color: #667eea; margin-bottom: 0.5rem;">🎓 Md. Rony Mia</h3>
+            <p style="color: #6b7280;">
+                📧 22303296@iubat.edu
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("---")
 
 # Footer
 st.markdown("""

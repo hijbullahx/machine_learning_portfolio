@@ -1,6 +1,4 @@
 import streamlit as st
-import json
-import os
 
 # Set page configuration
 st.set_page_config(
@@ -205,19 +203,20 @@ st.markdown("""
     }
     
     .stButton > button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
         border: none;
-        border-radius: 10px;
-        padding: 0.5rem 2rem;
-        font-weight: 600;
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        font-weight: 700;
+        font-size: 1.1rem;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
     }
     
     .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.6);
     }
     </style>
 """, unsafe_allow_html=True)
@@ -234,7 +233,7 @@ st.markdown("""
 # Introduction
 st.markdown('<h2 class="section-title">👋 Welcome to My ML Portfolio</h2>', unsafe_allow_html=True)
 st.markdown("""
-<<div class="intro-section">
+<div class="intro-section">
   <p>
     I am <strong>Md. Taher Bin Omar Hijbullah</strong>, a Computer Science student and aspiring 
     <strong>Machine Learning enthusiast</strong> currently learning and exploring the fundamentals 
@@ -256,128 +255,35 @@ st.markdown("""
     gradually advancing toward more complex AI and ML applications in the future.
   </p>
 </div>
-
 """, unsafe_allow_html=True)
 
 st.markdown("---")
 
-# Load projects from JSON
-projects_file = "projects.json"
-if os.path.exists(projects_file):
-    with open(projects_file, 'r') as f:
-        projects_data = json.load(f)
-else:
-    # Default project data
-    projects_data = {
-        "projects": [
-            {
-                "name": "🚗 Autonomous Vehicle Perception",
-                "description": "Real-time obstacle detection system designed for Bangladesh's dense traffic conditions using YOLOv11. Detects vehicles, pedestrians, and obstacles with high accuracy.",
-                "status": "Active",
-                "github": "https://github.com/yourusername/BD_Autonomous_YOLOv11",
-                "page": "1_🚗_Autonomous_Vehicle"
-            }
-        ]
-    }
-    # Save default data
-    with open(projects_file, 'w') as f:
-        json.dump(projects_data, f, indent=4)
-
-# Display Projects
-st.markdown('<h2 class="section-title">🚀 Active Research Projects</h2>', unsafe_allow_html=True)
-st.markdown("Explore my current research and development projects:")
+# Active Projects
+st.markdown('<h2 class="section-title">🚀 Active Projects</h2>', unsafe_allow_html=True)
+st.markdown("Click on a project card to explore:")
 st.markdown("")
 
-# Create project grid
-projects = projects_data.get("projects", [])
-if projects:
-    # Display 2 projects per row
-    for i in range(0, len(projects), 2):
-        cols = st.columns(2)
-        
-        for idx, col in enumerate(cols):
-            if i + idx < len(projects):
-                project = projects[i + idx]
-                
-                with col:
-                    st.markdown(f"""
-                        <div class="project-card">
-                            <h3>{project['name']}</h3>
-                            <div class="status-badge">{project['status']}</div>
-                            <p style="color: #4a5568; line-height: 1.6;">{project['description']}</p>
-                        </div>
-                    """, unsafe_allow_html=True)
-                    
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        if project.get('page'):
-                            st.info(f"👉 Navigate to **{project['name']}** page from the sidebar")
-                    with col2:
-                        if project.get('github'):
-                            st.markdown(f"[🔗 GitHub]({project['github']})")
-                    
-                    st.markdown("")
-else:
-    st.info("No projects available yet. Check the Admin Panel to add projects.")
+# Clickable Project Card
+if st.button("🚗 Autonomous Vehicle Perception", use_container_width=True, type="primary"):
+    st.switch_page("pages/1_🚗_Autonomous_Vehicle.py")
 
-st.markdown("---")
-
-# Skills and Technologies
-st.markdown('<h2 class="section-title">🛠️ Technologies & Frameworks</h2>', unsafe_allow_html=True)
-col1, col2, col3, col4 = st.columns(4)
-
-with col1:
-    st.markdown("""
-    <div class="tech-card">
-        <h3>🧠 Deep Learning</h3>
-        <ul style="list-style: none; padding: 0;">
-            <li>✓ PyTorch</li>
-            <li>✓ TensorFlow</li>
-            <li>✓ Ultralytics YOLO</li>
-            <li>✓ OpenCV</li>
-        </ul>
+st.markdown("""
+    <div class="project-card">
+        <h3>🚗 Autonomous Vehicle Perception</h3>
+        <div class="status-badge">Active</div>
+        <p style="color: #4a5568; line-height: 1.6;">
+            Real-time obstacle detection system designed for Bangladesh's dense traffic conditions using YOLOv11. 
+            Detects vehicles, pedestrians, and obstacles with high accuracy for safer autonomous navigation 
+            in complex urban environments.
+        </p>
+        <p style="color: #667eea; font-weight: 600; margin-top: 1rem;">
+            👆 Click the button above to enter this project
+        </p>
     </div>
-    """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
-with col2:
-    st.markdown("""
-    <div class="tech-card">
-        <h3>👁️ Computer Vision</h3>
-        <ul style="list-style: none; padding: 0;">
-            <li>✓ Object Detection</li>
-            <li>✓ Image Segmentation</li>
-            <li>✓ Video Analysis</li>
-            <li>✓ Real-time Processing</li>
-        </ul>
-    </div>
-    """, unsafe_allow_html=True)
-
-with col3:
-    st.markdown("""
-    <div class="tech-card">
-        <h3>💻 Development</h3>
-        <ul style="list-style: none; padding: 0;">
-            <li>✓ Python</li>
-            <li>✓ Streamlit</li>
-            <li>✓ Git/GitHub</li>
-            <li>✓ Docker</li>
-        </ul>
-    </div>
-    """, unsafe_allow_html=True)
-
-with col4:
-    st.markdown("""
-    <div class="tech-card">
-        <h3>🔬 Research Areas</h3>
-        <ul style="list-style: none; padding: 0;">
-            <li>✓ Autonomous Vehicles</li>
-            <li>✓ Traffic Analysis</li>
-            <li>✓ Edge AI</li>
-            <li>✓ Model Optimization</li>
-        </ul>
-    </div>
-    """, unsafe_allow_html=True)
-
+st.markdown("[🔗 View on GitHub](https://github.com/hijbullahx)")
 st.markdown("---")
 
 # Contact Information
