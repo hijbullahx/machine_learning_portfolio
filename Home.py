@@ -234,19 +234,29 @@ st.markdown("""
 # Introduction
 st.markdown('<h2 class="section-title">👋 Welcome to My ML Portfolio</h2>', unsafe_allow_html=True)
 st.markdown("""
-<div class="intro-section">
-I am <strong>Md. Taher Bin Omar Hijbullah</strong>, a passionate Machine Learning Engineer and AI Researcher 
-specializing in Computer Vision and Deep Learning applications. This portfolio showcases my research 
-projects and implementations in autonomous systems, object detection, and intelligent perception systems.
+<<div class="intro-section">
+  <p>
+    I am <strong>Md. Taher Bin Omar Hijbullah</strong>, a Computer Science student and aspiring 
+    <strong>Machine Learning enthusiast</strong> currently learning and exploring the fundamentals 
+    of ML, Deep Learning, and AI-driven systems. This portfolio reflects my learning journey, practice 
+    projects, and experiments as I build a strong foundation in intelligent systems and data-driven 
+    problem solving.
+  </p>
 
-<h3>🎯 Research Focus:</h3>
-<ul>
-<li><strong>Autonomous Vehicle Perception</strong> for complex traffic scenarios</li>
-<li><strong>Real-time Object Detection</strong> using state-of-the-art YOLO architectures</li>
-<li><strong>Deep Learning</strong> applications for Bangladesh's unique road conditions</li>
-<li><strong>AI-powered solutions</strong> for emerging market challenges</li>
-</ul>
+  <h3>🎯 Current Learning Focus:</h3>
+  <ul>
+    <li><strong>Machine Learning fundamentals</strong> using Python and common ML libraries</li>
+    <li><strong>Deep Learning concepts</strong> and neural network basics</li>
+    <li><strong>Computer Vision fundamentals</strong> through small experiments and practice projects</li>
+    <li><strong>Applied AI</strong> for solving practical, real-world problems</li>
+  </ul>
+
+  <p>
+    I am actively learning through coursework, self-study, and hands-on projects, with the goal of 
+    gradually advancing toward more complex AI and ML applications in the future.
+  </p>
 </div>
+
 """, unsafe_allow_html=True)
 
 st.markdown("---")
