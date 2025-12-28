@@ -55,6 +55,20 @@ st.markdown("""
         border-left: 5px solid #667eea;
         margin-bottom: 2rem;
         box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        color: #1a1a1a;
+    }
+    
+    .intro-section h3 {
+        color: #1a1a1a;
+        margin-top: 1rem;
+    }
+    
+    .intro-section ul {
+        color: #2d3748;
+    }
+    
+    .intro-section strong {
+        color: #000000;
     }
     
     .project-card {
