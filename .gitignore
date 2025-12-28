@@ -8,9 +8,7 @@ ENV/
 temp/
 *.tmp
 
-# Model weights (large files)
-weights/
-*.pt
+# Other model formats (large files)
 *.pth
 *.onnx
 *.engine
