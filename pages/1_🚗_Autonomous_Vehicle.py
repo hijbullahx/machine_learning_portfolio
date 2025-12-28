@@ -4,6 +4,11 @@ import numpy as np
 from PIL import Image
 from ultralytics import YOLO
 import os
+import sys
+
+# Add utils to path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils import hf_manager
 
 # Set page configuration
 st.set_page_config(
@@ -119,12 +124,20 @@ st.markdown("---")
 @st.cache_resource
 def load_model():
     """Load YOLO model with error handling"""
-    model_path = "weights/best.pt"
+    model_filename = "vehicle_best.pt"
+    model_path = f"weights/{model_filename}"
     
+    # Try to download from Hugging Face if not exists locally
     if not os.path.exists(model_path):
-        st.error(f"❌ Model file not found at: {model_path}")
-        st.info("📁 Please place your trained YOLOv11 model (best.pt) in the 'weights' folder or upload via Admin Panel.")
-        st.stop()
+        st.info(f"📥 Downloading model from Hugging Face...")
+        downloaded_path = hf_manager.download_model(model_filename)
+        
+        if downloaded_path:
+            model_path = downloaded_path
+        else:
+            st.error(f"❌ Model file not found: {model_filename}")
+            st.info("📁 Please upload the model via Admin Panel or ensure it exists in the Hugging Face repo.")
+            st.stop()
     
     try:
         model = YOLO(model_path)

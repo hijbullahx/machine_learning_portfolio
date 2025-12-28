@@ -1,11 +1,11 @@
 {
     "projects": [
         {
-            "name": "🚗 Autonomous Vehicle Perception",
+            "name": "Autonomous Vehicle Perception",
             "description": "Real-time obstacle detection system designed for Bangladesh's dense traffic conditions using YOLOv11. Detects vehicles, pedestrians, and obstacles with high accuracy in complex urban environments.",
             "status": "Active",
             "github": "https://github.com/yourusername/BD_Autonomous_YOLOv11",
-            "page": "1_🚗_Autonomous_Vehicle"
+            "page": "1_\u00f0\u0178\u0161\u2014_Autonomous_Vehicle"
         }
     ]
 }

@@ -3,6 +3,11 @@ import json
 import os
 import shutil
 from datetime import datetime
+import sys
+
+# Add utils to path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils import hf_manager
 
 # Set page configuration
 st.set_page_config(
@@ -193,98 +198,104 @@ else:
         st.markdown("---")
         
         # Tabs for different admin functions for this project
-        tab1, tab2, tab3 = st.tabs(["📦 Model Management", "📝 Project Settings", "⚙️ System Info"])
+        tab1, tab2, tab3, tab4 = st.tabs(["📦 Model Management", "📝 Project Settings", "⚙️ System Info", "📤 Upload Project"])
     else:
         st.warning("⚠️ No projects found. Please add a project first.")
-        st.info("💡 Use the 'Add New Project' section below to create your first project.")
+        st.info("💡 Use the 'Upload Project' tab to add your first project.")
         
-        # Show only project management tab if no projects
-        tab1, tab2, tab3 = st.tabs(["📦 Model Management", "📝 Project Settings", "⚙️ System Info"])
+        # Show all tabs even if no projects
+        tab1, tab2, tab3, tab4 = st.tabs(["📦 Model Management", "📝 Project Settings", "⚙️ System Info", "📤 Upload Project"])
     
     # TAB 1: Model Management
     with tab1:
         if projects_data["projects"]:
             st.header(f"📦 Model Management - {current_project['name']}")
-            st.markdown("Upload a new trained model for this project.")
+            st.markdown("Upload a new trained model for this project to Hugging Face.")
+            
+            # Get the model filename for this project
+            model_filename = hf_manager.get_model_filename_for_project(current_project['name'])
+            
+            st.info(f"📄 Model file for this project: **{model_filename}**")
+            
+            # Display current model info
+            model_info = hf_manager.get_model_info(model_filename)
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.markdown("### 📊 Current Model Status")
+                if model_info['exists']:
+                    st.success(f"✅ Model exists locally")
+                    st.metric("File Size", f"{model_info['size_mb']} MB")
+                    st.metric("Location", "weights/" + model_filename)
+                else:
+                    st.warning("⚠️ Model not found locally")
+                    st.info("Will download from Hugging Face when needed")
+                
+                # List available models in HF repo
+                st.markdown("### 🗂️ Available Models in HF Repo")
+                with st.spinner("Loading..."):
+                    available_models = hf_manager.list_available_models()
+                    if available_models:
+                        for model in available_models:
+                            if model == model_filename:
+                                st.success(f"✓ {model} (current)")
+                            else:
+                                st.info(f"○ {model}")
+                    else:
+                        st.warning("No models found in repository")
+            
+            with col2:
+                st.markdown("### 📤 Upload New Model")
+                uploaded_model = st.file_uploader(
+                    "Choose a model file",
+                    type=["pt", "pth", "onnx"],
+                    help=f"Upload a new model - will be saved as {model_filename}",
+                    key="model_uploader"
+                )
+                
+                if uploaded_model is not None:
+                    st.write(f"**File:** {uploaded_model.name}")
+                    st.write(f"**Size:** {uploaded_model.size / (1024 * 1024):.2f} MB")
+                    st.write(f"**Will be saved as:** {model_filename}")
+                    
+                    if st.button("🚀 Upload to Hugging Face", type="primary"):
+                        try:
+                            # Save temporarily
+                            os.makedirs("weights", exist_ok=True)
+                            temp_path = f"weights/temp_{model_filename}"
+                            
+                            with open(temp_path, "wb") as f:
+                                f.write(uploaded_model.read())
+                            
+                            # Upload to Hugging Face
+                            with st.spinner("Uploading to Hugging Face..."):
+                                success = hf_manager.upload_model(temp_path, model_filename)
+                            
+                            if success:
+                                # Rename to final name
+                                final_path = f"weights/{model_filename}"
+                                if os.path.exists(final_path):
+                                    # Backup old model
+                                    backup_path = f"weights/{model_filename}.backup"
+                                    shutil.move(final_path, backup_path)
+                                
+                                shutil.move(temp_path, final_path)
+                                
+                                st.success("✅ Model uploaded to Hugging Face successfully!")
+                                st.balloons()
+                                st.info("🔄 Please reload the project page to use the new model.")
+                            else:
+                                os.remove(temp_path)
+                                st.error("❌ Failed to upload model to Hugging Face")
+                                
+                        except Exception as e:
+                            st.error(f"❌ Error: {str(e)}")
+                            if os.path.exists(temp_path):
+                                os.remove(temp_path)
         else:
             st.header("📦 Model Management")
             st.info("Please add a project first to manage models.")
-        
-        col1, col2 = st.columns([2, 1])
-        
-        with col1:
-            # Current model info
-            model_path = "weights/best.pt"
-            if os.path.exists(model_path):
-                model_size = os.path.getsize(model_path) / (1024 * 1024)  # Convert to MB
-                model_modified = datetime.fromtimestamp(os.path.getmtime(model_path))
-                
-                st.markdown(f"""
-                    <div class="admin-card">
-                        <h3 style="color: #10b981; margin-bottom: 1rem;">✅ Model Status: Active</h3>
-                        <p><strong>File:</strong> best.pt</p>
-                        <p><strong>Size:</strong> {model_size:.2f} MB</p>
-                        <p><strong>Last Updated:</strong> {model_modified.strftime('%Y-%m-%d %H:%M:%S')}</p>
-                    </div>
-                """, unsafe_allow_html=True)
-            else:
-                st.markdown("""
-                    <div class="admin-card">
-                        <h3 style="color: #ef4444;">⚠️ No Model Found</h3>
-                        <p>Please upload a model file below</p>
-                    </div>
-                """, unsafe_allow_html=True)
-            
-            st.markdown("---")
-            
-            # Upload new model
-            st.subheader("Upload New Model")
-            uploaded_model = st.file_uploader(
-                "Choose a .pt model file",
-                type=["pt"],
-                help="Upload your trained YOLOv11 model file"
-            )
-            
-            if uploaded_model is not None:
-                st.write(f"**Uploaded:** {uploaded_model.name}")
-                st.write(f"**Size:** {uploaded_model.size / (1024 * 1024):.2f} MB")
-                
-                if st.button("🔄 Replace Current Model", type="primary"):
-                    try:
-                        # Create backup of old model
-                        if os.path.exists(model_path):
-                            backup_path = f"weights/best_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pt"
-                            shutil.copy(model_path, backup_path)
-                            st.info(f"📦 Backup created: {backup_path}")
-                        
-                        # Save new model
-                        os.makedirs("weights", exist_ok=True)
-                        with open(model_path, "wb") as f:
-                            f.write(uploaded_model.read())
-                        
-                        st.success("✅ Model updated successfully! Please reload the Autonomous Vehicle page.")
-                        st.balloons()
-                        
-                    except Exception as e:
-                        st.error(f"❌ Error updating model: {str(e)}")
-        
-        with col2:
-            st.markdown("""
-                <div class="admin-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                    <h3 style="color: white;">📋 Instructions</h3>
-                    <ol style="text-align: left; padding-left: 1.5rem;">
-                        <li>Train your YOLOv11 model</li>
-                        <li>Export as .pt format</li>
-                        <li>Upload using the form</li>
-                        <li>Click Replace Current Model</li>
-                        <li>Refresh the app to use new model</li>
-                    </ol>
-                    <div style="margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.2); border-radius: 10px;">
-                        <strong>⚠️ Important:</strong><br>
-                        A backup will be created automatically
-                    </div>
-                </div>
-            """, unsafe_allow_html=True)
     
     # TAB 2: Project Settings
     with tab2:
@@ -434,6 +445,122 @@ else:
         
         with col3:
             st.info("More features coming soon!")
+    
+    # TAB 4: Upload Project
+    with tab4:
+        st.header("📤 Upload Complete Project")
+        st.markdown("Add a new project with all its details and files.")
+        
+        st.markdown("""
+            <div class="admin-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <h3 style="color: white;">📋 Project Upload Guide</h3>
+                <p>Upload a complete project including model files, documentation, and metadata.</p>
+                <ul style="text-align: left; line-height: 1.8;">
+                    <li>✓ Fill in project details below</li>
+                    <li>✓ Upload trained model file (.pt)</li>
+                    <li>✓ Optionally upload demo images/videos</li>
+                    <li>✓ Project will appear on the home page</li>
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("---")
+        
+        # Project upload form
+        with st.form("upload_project_form"):
+            st.subheader("📝 Project Information")
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                upload_project_name = st.text_input("Project Name*", placeholder="e.g., 🎯 Traffic Sign Detection")
+                upload_project_status = st.selectbox("Status", ["Active", "In Development", "Completed", "Archived"])
+                upload_project_github = st.text_input("GitHub Repository", placeholder="https://github.com/username/repo")
+            
+            with col2:
+                upload_project_page = st.text_input("Page Path", placeholder="e.g., 2_🎯_Traffic_Signs")
+                upload_project_icon = st.text_input("Project Icon (emoji)", placeholder="🎯", max_chars=2)
+                upload_project_tags = st.text_input("Tags (comma-separated)", placeholder="computer-vision, deep-learning")
+            
+            upload_project_description = st.text_area(
+                "Project Description*",
+                placeholder="Detailed description of your project, its goals, and achievements...",
+                height=150
+            )
+            
+            st.markdown("---")
+            st.subheader("📦 Model & Files")
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                upload_model_file = st.file_uploader(
+                    "Upload Model File (.pt)*",
+                    type=["pt"],
+                    help="Upload your trained model file"
+                )
+            
+            with col2:
+                upload_demo_files = st.file_uploader(
+                    "Upload Demo Files (optional)",
+                    type=["jpg", "jpeg", "png", "mp4"],
+                    accept_multiple_files=True,
+                    help="Upload sample images or videos for demonstration"
+                )
+            
+            st.markdown("---")
+            
+            # Submit button
+            upload_submitted = st.form_submit_button("🚀 Upload Project", type="primary", use_container_width=True)
+            
+            if upload_submitted:
+                if upload_project_name and upload_project_description and upload_model_file:
+                    try:
+                        # Create project folder structure
+                        project_folder = f"projects/{upload_project_name.replace(' ', '_').replace('🎯', '').replace('🚗', '').strip()}"
+                        os.makedirs(f"{project_folder}/models", exist_ok=True)
+                        os.makedirs(f"{project_folder}/demos", exist_ok=True)
+                        
+                        # Save model file
+                        model_filename = f"{project_folder}/models/{upload_model_file.name}"
+                        with open(model_filename, "wb") as f:
+                            f.write(upload_model_file.read())
+                        
+                        # Save demo files
+                        demo_files_saved = []
+                        if upload_demo_files:
+                            for demo_file in upload_demo_files:
+                                demo_filename = f"{project_folder}/demos/{demo_file.name}"
+                                with open(demo_filename, "wb") as f:
+                                    f.write(demo_file.read())
+                                demo_files_saved.append(demo_filename)
+                        
+                        # Add to projects.json
+                        new_project = {
+                            "name": f"{upload_project_icon} {upload_project_name}" if upload_project_icon else upload_project_name,
+                            "description": upload_project_description,
+                            "status": upload_project_status,
+                            "github": upload_project_github if upload_project_github else "",
+                            "page": upload_project_page if upload_project_page else "",
+                            "model_path": model_filename,
+                            "demo_files": demo_files_saved,
+                            "tags": [tag.strip() for tag in upload_project_tags.split(",")] if upload_project_tags else []
+                        }
+                        
+                        projects_data["projects"].append(new_project)
+                        
+                        with open(projects_file, 'w') as f:
+                            json.dump(projects_data, f, indent=4)
+                        
+                        st.success("✅ Project uploaded successfully!")
+                        st.balloons()
+                        st.info(f"📁 Project saved to: {project_folder}")
+                        st.rerun()
+                        
+                    except Exception as e:
+                        st.error(f"❌ Error uploading project: {str(e)}")
+                else:
+                    st.error("❌ Please fill in required fields: Project Name, Description, and Model File.")
 
 # Footer
 st.markdown("""
