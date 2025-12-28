@@ -141,15 +141,13 @@ if not st.session_state.authenticated:
         password = st.text_input("Password", type="password", placeholder="Enter admin password")
         
         if st.button("🔓 Login", type="primary", use_container_width=True):
-            if password == "admin123":
+            if password == "hijbullah23":
                 st.session_state.authenticated = True
                 st.success("✅ Authentication successful! Redirecting...")
                 st.balloons()
                 st.rerun()
             else:
                 st.error("❌ Invalid password. Please try again.")
-        
-        st.info("💡 Default password: admin123")
     
 else:
     # Admin Panel Content
