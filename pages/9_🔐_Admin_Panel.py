@@ -160,13 +160,55 @@ else:
         st.session_state.authenticated = False
         st.rerun()
     
-    # Tabs for different admin functions
-    tab1, tab2, tab3 = st.tabs(["📦 Model Management", "📝 Project Management", "⚙️ System Info"])
+    # Load projects
+    projects_file = "projects.json"
+    if os.path.exists(projects_file):
+        with open(projects_file, 'r') as f:
+            projects_data = json.load(f)
+    else:
+        projects_data = {"projects": []}
+    
+    # Project selector
+    st.subheader("📂 Select Project")
+    if projects_data["projects"]:
+        project_names = [p["name"] for p in projects_data["projects"]]
+        selected_project = st.selectbox(
+            "Choose a project to manage:",
+            project_names,
+            help="Select a project to manage its model, settings, and information"
+        )
+        
+        # Get selected project details
+        project_index = project_names.index(selected_project)
+        current_project = projects_data["projects"][project_index]
+        
+        st.markdown(f"""
+            <div class="admin-card">
+                <h3>{current_project['name']}</h3>
+                <p><strong>Status:</strong> {current_project['status']}</p>
+                <p>{current_project['description']}</p>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("---")
+        
+        # Tabs for different admin functions for this project
+        tab1, tab2, tab3 = st.tabs(["📦 Model Management", "📝 Project Settings", "⚙️ System Info"])
+    else:
+        st.warning("⚠️ No projects found. Please add a project first.")
+        st.info("💡 Use the 'Add New Project' section below to create your first project.")
+        
+        # Show only project management tab if no projects
+        tab1, tab2, tab3 = st.tabs(["📦 Model Management", "📝 Project Settings", "⚙️ System Info"])
     
     # TAB 1: Model Management
     with tab1:
-        st.header("📦 Update YOLO Model")
-        st.markdown("Upload a new trained model to replace the existing one.")
+        if projects_data["projects"]:
+            st.header(f"📦 Model Management - {current_project['name']}")
+            st.markdown("Upload a new trained model for this project.")
+        else:
+            st.header("📦 Model Management")
+            st.info("Please add a project first to manage models.")
         
         col1, col2 = st.columns([2, 1])
         
@@ -244,38 +286,48 @@ else:
                 </div>
             """, unsafe_allow_html=True)
     
-    # TAB 2: Project Management
+    # TAB 2: Project Settings
     with tab2:
-        st.header("📝 Manage Portfolio Projects")
-        
-        # Load existing projects
-        projects_file = "projects.json"
-        if os.path.exists(projects_file):
-            with open(projects_file, 'r') as f:
-                projects_data = json.load(f)
-        else:
-            projects_data = {"projects": []}
-        
-        # Display existing projects
-        st.subheader("📚 Current Projects")
         if projects_data["projects"]:
-            for idx, project in enumerate(projects_data["projects"]):
-                with st.expander(f"📌 {project['name']}"):
-                    st.write(f"**Description:** {project['description']}")
-                    st.write(f"**Status:** {project['status']}")
-                    st.write(f"**GitHub:** {project.get('github', 'N/A')}")
-                    st.write(f"**Page:** {project.get('page', 'N/A')}")
-                    
-                    if st.button(f"🗑️ Delete", key=f"delete_{idx}"):
-                        projects_data["projects"].pop(idx)
-                        with open(projects_file, 'w') as f:
-                            json.dump(projects_data, f, indent=4)
-                        st.success("Project deleted!")
-                        st.rerun()
-        else:
-            st.info("No projects yet. Add one below!")
-        
-        st.markdown("---")
+            st.header(f"📝 Project Settings - {current_project['name']}")
+            
+            # Edit current project
+            st.subheader("✏️ Edit Current Project")
+            with st.form("edit_project_form"):
+                edit_name = st.text_input("Project Name", value=current_project['name'])
+                edit_description = st.text_area("Description", value=current_project['description'], height=100)
+                edit_status = st.selectbox("Status", ["Active", "In Development", "Completed", "Archived"], 
+                                          index=["Active", "In Development", "Completed", "Archived"].index(current_project['status']))
+                edit_github = st.text_input("GitHub Link", value=current_project.get('github', ''))
+                edit_page = st.text_input("Page Path", value=current_project.get('page', ''))
+                
+                col1, col2 = st.columns(2)
+                with col1:
+                    update_submitted = st.form_submit_button("💾 Update Project", type="primary", use_container_width=True)
+                with col2:
+                    delete_submitted = st.form_submit_button("🗑️ Delete Project", use_container_width=True)
+                
+                if update_submitted:
+                    projects_data["projects"][project_index] = {
+                        "name": edit_name,
+                        "description": edit_description,
+                        "status": edit_status,
+                        "github": edit_github,
+                        "page": edit_page
+                    }
+                    with open(projects_file, 'w') as f:
+                        json.dump(projects_data, f, indent=4)
+                    st.success("✅ Project updated successfully!")
+                    st.rerun()
+                
+                if delete_submitted:
+                    projects_data["projects"].pop(project_index)
+                    with open(projects_file, 'w') as f:
+                        json.dump(projects_data, f, indent=4)
+                    st.success("🗑️ Project deleted!")
+                    st.rerun()
+            
+            st.markdown("---")
         
         # Add new project
         st.subheader("➕ Add New Project")
@@ -291,7 +343,7 @@ else:
             project_github = st.text_input("GitHub Link (optional)", placeholder="https://github.com/...")
             project_page = st.text_input("Page Path (optional)", placeholder="e.g., 2_🎯_Sentiment_Analysis")
             
-            submitted = st.form_submit_button("✅ Add Project", type="primary")
+            submitted = st.form_submit_button("✅ Add Project", type="primary", use_container_width=True)
             
             if submitted:
                 if project_name and project_description:
@@ -316,7 +368,10 @@ else:
     
     # TAB 3: System Info
     with tab3:
-        st.header("⚙️ System Information")
+        if projects_data["projects"]:
+            st.header(f"⚙️ System Information - {current_project['name']}")
+        else:
+            st.header("⚙️ System Information")
         
         col1, col2 = st.columns(2)
         
