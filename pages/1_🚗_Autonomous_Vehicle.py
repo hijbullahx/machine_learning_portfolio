@@ -176,7 +176,6 @@ with col3:
             <li>✓ Python</li>
             <li>✓ Streamlit</li>
             <li>✓ Git/GitHub</li>
-            <li>✓ Docker</li>
         </ul>
     </div>
     """, unsafe_allow_html=True)
