@@ -15,24 +15,104 @@ st.set_page_config(
 # Custom CSS
 st.markdown("""
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+    
+    * {
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .main-title {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .subtitle {
+        color: #4a5568;
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .metric-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 1.5rem;
+        border-radius: 15px;
+        color: white;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        transition: transform 0.3s ease;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .image-container {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        transition: transform 0.3s ease;
+    }
+    
+    .image-container:hover {
+        transform: scale(1.02);
+    }
+    
+    .detection-list {
+        background: linear-gradient(to right, #f8f9fa, #e9ecef);
+        padding: 1.5rem;
+        border-radius: 15px;
+        border-left: 4px solid #667eea;
+    }
+    
+    .sidebar .element-container {
+        background: white;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    
+    .stButton > button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 0.7rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        width: 100%;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    
     .footer {
         position: fixed;
         left: 0;
         bottom: 0;
         width: 100%;
-        background-color: #f1f1f1;
-        color: #666;
+        background: linear-gradient(90deg, #1a1a1a 0%, #2d2d2d 100%);
+        color: #999;
         text-align: center;
-        padding: 10px 0;
-        font-size: 12px;
+        padding: 15px 0;
+        font-size: 13px;
         z-index: 999;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
     }
     </style>
 """, unsafe_allow_html=True)
 
 # Header
-st.title("🇧🇩 Bangladesh Autonomous Vehicle Obstacle Detection System")
-st.markdown("### Real-time Perception for Dense Traffic & Complex Road Conditions")
+st.markdown('<h1 class="main-title">🇧🇩 Bangladesh Autonomous Vehicle Obstacle Detection System</h1>', unsafe_allow_html=True)
+st.markdown('<p class="subtitle">Real-time Perception for Dense Traffic & Complex Road Conditions</p>', unsafe_allow_html=True)
 st.markdown("---")
 
 # Load model with error handling

@@ -14,17 +14,110 @@ st.set_page_config(
 # Custom CSS
 st.markdown("""
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+    
+    * {
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .login-container {
+        max-width: 450px;
+        margin: 5rem auto;
+        padding: 3rem;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        text-align: center;
+    }
+    
+    .admin-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+    
+    .admin-card {
+        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        margin-bottom: 2rem;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+    
+    .admin-card:hover {
+        border-color: #667eea;
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(102, 126, 234, 0.2);
+    }
+    
+    .success-badge {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 20px;
+        display: inline-block;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+    }
+    
+    .warning-badge {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 20px;
+        display: inline-block;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+    }
+    
+    .stButton > button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 0.7rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    
     .footer {
         position: fixed;
         left: 0;
         bottom: 0;
         width: 100%;
-        background-color: #f1f1f1;
-        color: #666;
+        background: linear-gradient(90deg, #1a1a1a 0%, #2d2d2d 100%);
+        color: #999;
         text-align: center;
-        padding: 10px 0;
-        font-size: 12px;
+        padding: 15px 0;
+        font-size: 13px;
         z-index: 999;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 1.5rem;
+        border-radius: 15px;
+        color: white;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+    
+    .stat-card h3 {
+        font-size: 2rem;
+        margin: 0.5rem 0;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -35,25 +128,33 @@ if 'authenticated' not in st.session_state:
 
 # Authentication
 if not st.session_state.authenticated:
-    st.title("🔐 Admin Panel - Authentication Required")
-    st.markdown("---")
+    st.markdown("""
+        <div class="login-container">
+            <h1 style="font-size: 3rem; margin-bottom: 0;">🔐</h1>
+            <h2 class="admin-header">Admin Panel</h2>
+            <p style="color: #6b7280; margin-bottom: 2rem;">Enter your credentials to continue</p>
+        </div>
+    """, unsafe_allow_html=True)
     
-    password = st.text_input("Enter Admin Password", type="password")
-    
-    if st.button("Login", type="primary"):
-        if password == "admin123":
-            st.session_state.authenticated = True
-            st.success("✅ Authentication successful! Redirecting...")
-            st.rerun()
-        else:
-            st.error("❌ Invalid password. Please try again.")
-    
-    st.info("💡 Default password: admin123")
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        password = st.text_input("Password", type="password", placeholder="Enter admin password")
+        
+        if st.button("🔓 Login", type="primary", use_container_width=True):
+            if password == "admin123":
+                st.session_state.authenticated = True
+                st.success("✅ Authentication successful! Redirecting...")
+                st.balloons()
+                st.rerun()
+            else:
+                st.error("❌ Invalid password. Please try again.")
+        
+        st.info("💡 Default password: admin123")
     
 else:
     # Admin Panel Content
-    st.title("🔐 Admin Panel")
-    st.markdown("### Manage Models, Projects, and System Settings")
+    st.markdown('<h1 class="admin-header">🔐 Admin Dashboard</h1>', unsafe_allow_html=True)
+    st.markdown('<p class="subtitle" style="text-align: center; color: #6b7280;">Manage Models, Projects, and System Settings</p>', unsafe_allow_html=True)
     st.markdown("---")
     
     # Logout button
@@ -70,10 +171,21 @@ else:
         st.markdown("Upload a new trained model to replace the existing one.")
         
         col1, col2 = st.columns([2, 1])
-        
-        with col1:
-            # Current model info
-            model_path = "weights/best.pt"
+        markdown(f"""
+                    <div class="admin-card">
+                        <h3 style="color: #10b981; margin-bottom: 1rem;">✅ Model Status: Active</h3>
+                        <p><strong>File:</strong> best.pt</p>
+                        <p><strong>Size:</strong> {model_size:.2f} MB</p>
+                        <p><strong>Last Updated:</strong> {model_modified.strftime('%Y-%m-%d %H:%M:%S')}</p>
+                    </div>
+                """, unsafe_allow_html=True)
+            else:
+                st.markdown("""
+                    <div class="admin-card">
+                        <h3 style="color: #ef4444;">⚠️ No Model Found</h3>
+                        <p>Please upload a model file below</p>
+                    </div>
+                """, unsafe_allow_html=True
             if os.path.exists(model_path):
                 model_size = os.path.getsize(model_path) / (1024 * 1024)  # Convert to MB
                 model_modified = datetime.fromtimestamp(os.path.getmtime(model_path))
@@ -106,17 +218,22 @@ else:
                             st.info(f"📦 Backup created: {backup_path}")
                         
                         # Save new model
-                        os.makedirs("weights", exist_ok=True)
-                        with open(model_path, "wb") as f:
-                            f.write(uploaded_model.read())
-                        
-                        st.success("✅ Model updated successfully! Please reload the Autonomous Vehicle page.")
-                        st.balloons()
-                        
-                    except Exception as e:
-                        st.error(f"❌ Error updating model: {str(e)}")
-        
-        with col2:
+                        o""
+                <div class="admin-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <h3 style="color: white;">📋 Instructions</h3>
+                    <ol style="text-align: left; padding-left: 1.5rem;">
+                        <li>Train your YOLOv11 model</li>
+                        <li>Export as .pt format</li>
+                        <li>Upload using the form</li>
+                        <li>Click Replace Current Model</li>
+                        <li>Refresh the app to use new model</li>
+                    </ol>
+                    <div style="margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.2); border-radius: 10px;">
+                        <strong>⚠️ Important:</strong><br>
+                        A backup will be created automatically
+                    </div>
+                </div>
+            """, unsafe_allow_html=True
             st.markdown("### 📋 Instructions")
             st.markdown("""
             1. Train your YOLOv11 model

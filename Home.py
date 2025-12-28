@@ -9,40 +9,201 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS for better styling
+# Custom CSS for professional styling
 st.markdown("""
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+    
+    * {
+        font-family: 'Inter', sans-serif;
+    }
+    
     .main-header {
         text-align: center;
-        padding: 2rem 0;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        padding: 3rem 2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
         color: white;
-        border-radius: 10px;
+        border-radius: 20px;
+        margin-bottom: 3rem;
+        box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
+        animation: fadeInDown 0.8s ease-out;
+    }
+    
+    .main-header h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .main-header h3 {
+        font-size: 1.8rem;
+        font-weight: 400;
+        margin-bottom: 0.5rem;
+        opacity: 0.95;
+    }
+    
+    .main-header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+    
+    .intro-section {
+        background: linear-gradient(to right, #f8f9fa, #e9ecef);
+        padding: 2rem;
+        border-radius: 15px;
+        border-left: 5px solid #667eea;
         margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     }
+    
     .project-card {
-        padding: 1.5rem;
-        border-radius: 10px;
-        border: 2px solid #e0e0e0;
-        background-color: #f9f9f9;
-        transition: transform 0.3s, box-shadow 0.3s;
+        padding: 2rem;
+        border-radius: 20px;
+        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+        border: 2px solid transparent;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        height: 100%;
+        position: relative;
+        overflow: hidden;
     }
+    
+    .project-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+    
+    .project-card:hover::before {
+        transform: scaleX(1);
+    }
+    
     .project-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 50px rgba(102, 126, 234, 0.3);
         border-color: #667eea;
     }
+    
+    .project-card h3 {
+        color: #1a1a1a;
+        font-weight: 700;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.4rem 1rem;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+    }
+    
+    .tech-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 1.5rem;
+        border-radius: 15px;
+        color: white;
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        transition: transform 0.3s ease;
+    }
+    
+    .tech-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .tech-card h3 {
+        color: white !important;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    .contact-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        border: 2px solid #e9ecef;
+        text-align: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    
+    .contact-card:hover {
+        border-color: #667eea;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+    }
+    
+    .section-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin: 2rem 0 1.5rem 0;
+        position: relative;
+        padding-bottom: 0.5rem;
+    }
+    
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 2px;
+    }
+    
     .footer {
         position: fixed;
         left: 0;
         bottom: 0;
         width: 100%;
-        background-color: #f1f1f1;
-        color: #666;
+        background: linear-gradient(90deg, #1a1a1a 0%, #2d2d2d 100%);
+        color: #999;
         text-align: center;
-        padding: 10px 0;
-        font-size: 12px;
+        padding: 15px 0;
+        font-size: 13px;
         z-index: 999;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    }
+    
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .stButton > button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 0.5rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
     }
     </style>
 """, unsafe_allow_html=True)
@@ -57,18 +218,22 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Introduction
-st.markdown("## 👋 Welcome to My ML Portfolio")
+st.markdown('<h2 class="section-title">👋 Welcome to My ML Portfolio</h2>', unsafe_allow_html=True)
 st.markdown("""
-I am **Md. Taher Bin Omar Hijbullah**, a passionate Machine Learning Engineer and AI Researcher 
+<div class="intro-section">
+I am <strong>Md. Taher Bin Omar Hijbullah</strong>, a passionate Machine Learning Engineer and AI Researcher 
 specializing in Computer Vision and Deep Learning applications. This portfolio showcases my research 
 projects and implementations in autonomous systems, object detection, and intelligent perception systems.
 
-### 🎯 Research Focus:
-- **Autonomous Vehicle Perception** for complex traffic scenarios
-- **Real-time Object Detection** using state-of-the-art YOLO architectures
-- **Deep Learning** applications for Bangladesh's unique road conditions
-- **AI-powered solutions** for emerging market challenges
-""")
+<h3>🎯 Research Focus:</h3>
+<ul>
+<li><strong>Autonomous Vehicle Perception</strong> for complex traffic scenarios</li>
+<li><strong>Real-time Object Detection</strong> using state-of-the-art YOLO architectures</li>
+<li><strong>Deep Learning</strong> applications for Bangladesh's unique road conditions</li>
+<li><strong>AI-powered solutions</strong> for emerging market challenges</li>
+</ul>
+</div>
+""", unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -95,7 +260,7 @@ else:
         json.dump(projects_data, f, indent=4)
 
 # Display Projects
-st.markdown("## 🚀 Active Projects")
+st.markdown('<h2 class="section-title">🚀 Active Research Projects</h2>', unsafe_allow_html=True)
 st.markdown("Explore my current research and development projects:")
 st.markdown("")
 
@@ -114,8 +279,8 @@ if projects:
                     st.markdown(f"""
                         <div class="project-card">
                             <h3>{project['name']}</h3>
-                            <p><strong>Status:</strong> <span style="color: #10b981;">●</span> {project['status']}</p>
-                            <p>{project['description']}</p>
+                            <div class="status-badge">{project['status']}</div>
+                            <p style="color: #4a5568; line-height: 1.6;">{project['description']}</p>
                         </div>
                     """, unsafe_allow_html=True)
                     
@@ -134,62 +299,92 @@ else:
 st.markdown("---")
 
 # Skills and Technologies
-st.markdown("## 🛠️ Technologies & Frameworks")
+st.markdown('<h2 class="section-title">🛠️ Technologies & Frameworks</h2>', unsafe_allow_html=True)
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    st.markdown("### Deep Learning")
     st.markdown("""
-    - PyTorch
-    - TensorFlow
-    - Ultralytics YOLO
-    - OpenCV
-    """)
+    <div class="tech-card">
+        <h3>🧠 Deep Learning</h3>
+        <ul style="list-style: none; padding: 0;">
+            <li>✓ PyTorch</li>
+            <li>✓ TensorFlow</li>
+            <li>✓ Ultralytics YOLO</li>
+            <li>✓ OpenCV</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
 
 with col2:
-    st.markdown("### Computer Vision")
     st.markdown("""
-    - Object Detection
-    - Image Segmentation
-    - Video Analysis
-    - Real-time Processing
-    """)
+    <div class="tech-card">
+        <h3>👁️ Computer Vision</h3>
+        <ul style="list-style: none; padding: 0;">
+            <li>✓ Object Detection</li>
+            <li>✓ Image Segmentation</li>
+            <li>✓ Video Analysis</li>
+            <li>✓ Real-time Processing</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
 
 with col3:
-    st.markdown("### Development")
     st.markdown("""
-    - Python
-    - Streamlit
-    - Git/GitHub
-    - Docker
-    """)
+    <div class="tech-card">
+        <h3>💻 Development</h3>
+        <ul style="list-style: none; padding: 0;">
+            <li>✓ Python</li>
+            <li>✓ Streamlit</li>
+            <li>✓ Git/GitHub</li>
+            <li>✓ Docker</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
 
 with col4:
-    st.markdown("### Research Areas")
     st.markdown("""
-    - Autonomous Vehicles
-    - Traffic Analysis
-    - Edge AI
-    - Model Optimization
-    """)
+    <div class="tech-card">
+        <h3>🔬 Research Areas</h3>
+        <ul style="list-style: none; padding: 0;">
+            <li>✓ Autonomous Vehicles</li>
+            <li>✓ Traffic Analysis</li>
+            <li>✓ Edge AI</li>
+            <li>✓ Model Optimization</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
 
 st.markdown("---")
 
 # Contact Information
-st.markdown("## 📫 Get in Touch")
+st.markdown('<h2 class="section-title">📫 Get in Touch</h2>', unsafe_allow_html=True)
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.markdown("### 📧 Email")
-    st.markdown("contact@example.com")
+    st.markdown("""
+    <div class="contact-card">
+        <h3 style="color: #667eea;">📧 Email</h3>
+        <p style="color: #4a5568;">contact@example.com</p>
+    </div>
+    """, unsafe_allow_html=True)
 
 with col2:
-    st.markdown("### 💼 LinkedIn")
-    st.markdown("[Connect on LinkedIn](#)")
+    st.markdown("""
+    <div class="contact-card">
+        <h3 style="color: #667eea;">💼 LinkedIn</h3>
+        <p><a href="#" style="color: #4a5568; text-decoration: none;">Connect on LinkedIn</a></p>
+    </div>
+    """, unsafe_allow_html=True)
 
 with col3:
-    st.markdown("### 🐙 GitHub")
-    st.markdown("[View GitHub Profile](#)")
+    st.markdown("""
+    <div class="contact-card">
+        <h3 style="color: #667eea;">🐙 GitHub</h3>
+        <p><a href="#" style="color: #4a5568; text-decoration: none;">View GitHub Profile</a></p>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("---")
 
 # Footer
 st.markdown("""
