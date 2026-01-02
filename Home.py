@@ -1,4 +1,7 @@
 import streamlit as st
+import os
+import sys
+import importlib.util
 
 # Set page configuration
 st.set_page_config(
@@ -259,29 +262,82 @@ st.markdown("""
 
 st.markdown("---")
 
+# Function to auto-discover projects
+def discover_projects():
+    """Automatically discover all ML projects in pages directory"""
+    projects = {}
+    pages_dir = "pages"
+    
+    if not os.path.exists(pages_dir):
+        return projects
+    
+    # Iterate through subdirectories in pages/
+    for folder in os.listdir(pages_dir):
+        folder_path = os.path.join(pages_dir, folder)
+        
+        # Skip if not a directory or starts with underscore
+        if not os.path.isdir(folder_path) or folder.startswith('_'):
+            continue
+        
+        # Look for config.py in the project folder
+        config_path = os.path.join(folder_path, "config.py")
+        if os.path.exists(config_path):
+            try:
+                # Dynamically import the config module
+                spec = importlib.util.spec_from_file_location(f"{folder}.config", config_path)
+                config_module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(config_module)
+                
+                # Get the PROJECT_CONFIG from the module
+                if hasattr(config_module, 'PROJECT_CONFIG'):
+                    project_config = config_module.PROJECT_CONFIG
+                    project_id = project_config.get('id', folder)
+                    
+                    # Use page_name if provided, otherwise construct path
+                    if 'page_name' in project_config:
+                        project_config['page_path'] = f"pages/{project_config['page_name']}"
+                    else:
+                        project_config['page_path'] = os.path.join(folder_path, "main.py")
+                    
+                    projects[project_id] = project_config
+            except Exception as e:
+                st.warning(f"Could not load project '{folder}': {str(e)}")
+    
+    return projects
+
 # Active Projects
 st.markdown('<h2 class="section-title">🚀 Active Projects</h2>', unsafe_allow_html=True)
 st.markdown("Click on a project card to explore:")
 st.markdown("")
 
-# Clickable Project Card
-if st.button("🚗 Autonomous Vehicle Perception", use_container_width=True, type="primary"):
-    st.switch_page("pages/1_🚗_Autonomous_Vehicle.py")
+# Get all projects dynamically by scanning pages directory
+projects = discover_projects()
 
-st.markdown("""
-    <div class="project-card">
-        <h3>🚗 Autonomous Vehicle Perception</h3>
-        <div class="status-badge">Active</div>
-        <p style="color: #4a5568; line-height: 1.6;">
-            Real-time obstacle detection system designed for Bangladesh's dense traffic conditions using YOLOv11. 
-            Detects vehicles, pedestrians, and obstacles with high accuracy for safer autonomous navigation 
-            in complex urban environments.
-        </p>
-        <p style="color: #667eea; font-weight: 600; margin-top: 1rem;">
-            👆 Click the button above to enter this project
-        </p>
-    </div>
-""", unsafe_allow_html=True)
+if not projects:
+    st.info("No projects found. Add projects to the `pages/` directory.")
+else:
+    # Render each project
+    for project_id, project in projects.items():
+        # Clickable Project Button
+        button_label = f"{project['icon']} {project['title']}"
+        if st.button(button_label, use_container_width=True, type="primary", key=f"btn_{project_id}"):
+            st.switch_page(project['page_path'])
+        
+        # Project Card with dynamic content
+        st.markdown(f"""
+            <div class="project-card">
+                <h3>{project['icon']} {project['title']}</h3>
+                <div class="status-badge">{project['status']}</div>
+                <p style="color: #4a5568; line-height: 1.6;">
+                    {project['description']}
+                </p>
+                <p style="color: #667eea; font-weight: 600; margin-top: 1rem;">
+                    👆 Click the button above to enter this project
+                </p>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("")  # Add spacing between projects
 
 st.markdown("[🔗 View on GitHub](https://github.com/hijbullahx)")
 st.markdown("---")
